@@ -53,9 +53,9 @@ def convert_from_ascii(fp, output):
     mat = output.create_dataset('matrix', compression='gzip', dtype=float,
                                 shape=(n_ids, n_ids))
     for idx, (expected, row) in enumerate(zip(ids, fp)):
-        row, remainder = decoder(row).split('\t', 1)
+        rowid, remainder = decoder(row).split('\t', 1)
 
-        if row[0] != expected:
+        if rowid != expected:
             raise IOError("Does not appear to be a distance matrix")
 
         try:

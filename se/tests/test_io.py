@@ -24,10 +24,9 @@ class ConvertTests(unittest.TestCase):
         self.assertEqual(dict(obs.attrs),
                          format_spec)
 
-
-simple_dm = """	A	B	C
+simple_dm = """	A	Bx	C
 A	0	0.1	0.2
-B	0.1	0	0.3
+Bx	0.1	0	0.3
 C	0.2	0.3	0
 """
 
