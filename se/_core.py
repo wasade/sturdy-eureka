@@ -21,27 +21,30 @@ class DistanceMatrix(object):
         """
         self._transposed = transposed
         self._fp = fp
-        self._f = h5py.File(self._fp, 'r')
+        self._f = h5py.File(self._fp, 'r', libver='latest')
         self._mat = self._f['matrix']
 
-        self.ids = tuple([i.decode('utf-8') for i in self._f['order']])
+        ids = self._f['order'][:]
+        self.ids = tuple([i.decode('utf-8') for i in ids])
         self._index = {i: idx for idx, i in enumerate(self.ids)}
         self._inv_index = {v: k for k, v in self._index.items()}
 
         # masking in h5py is most efficient if using boolean arrays
         # instead of fancy slicing as is typical with numpy
         if mask is None:
+            mask = set(self.ids)
             # if we don't have a mask, set one that is all the things
             self._mask = np.ones(len(self._index), dtype=bool)
             mask = self.ids
         else:
-            if not set(mask).issubset(set(self.ids)):
+            mask = set(mask)
+            if not mask.issubset(set(self.ids)):
                 raise KeyError("Mask includes IDs not in the matrix")
 
-            self._mask = np.asarray([i in set(mask) for i in self.ids])
+            self._mask = np.asarray([i in mask for i in self._index])
 
         # store the IDs of the mask, but in matrix order
-        self._mask_ids = [i for i in self.ids if i in set(mask)]
+        self._mask_ids = [i for i in self.ids if i in mask]
 
     def __getitem__(self, k):
         """Get the values associated with an ID
