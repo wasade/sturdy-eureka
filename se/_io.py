@@ -50,8 +50,8 @@ def convert_from_ascii(fp, output):
                                    dtype=VLEN_DTYPE)
     ids_ds[:] = ids
 
-    mat = output.create_dataset('matrix', compression='gzip', dtype=float,
-                                shape=(n_ids, n_ids))
+    mat = output.create_dataset('matrix', dtype=float,
+                                shape=(n_ids, n_ids), chunks=(1, n_ids))
     for idx, (expected, row) in enumerate(zip(ids, fp)):
         rowid, remainder = decoder(row).split('\t', 1)
 
